@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Siginup() {
   return (
     <div>
@@ -30,6 +32,12 @@ export default function Siginup() {
           join us
         </button>
       </form>
+      <p className="max-w-lg mx-auto capitalize">
+        already have an acount.{" "}
+        <span className="text-blue-600 underline">
+          <Link>signin</Link>
+        </span>
+      </p>
     </div>
   );
 }
