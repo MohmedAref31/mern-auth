@@ -1,6 +1,6 @@
 
 export default function Home() {
   return (
-    <div>Home</div>
+    <div className="text-center" >Home</div>
   )
 }
