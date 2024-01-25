@@ -9,16 +9,17 @@ export const signup = expressAsyncHandler(async (req, res, next) => {
 
   await user
     .save()
-    .then(() => res.status(201).json({ success: true, data: user }))
-    .catch((err) => next(errorHandler(err.message, 500)));
+
+    res.status(201).json({ success: true, data:  {email: user.email, _id:user._id, username:user.username, profilePicture:user.profilePicture}});
+
 });
 
 export const signin = expressAsyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  // validate email and password existence 
-  if(!email || !password)
-    return next(errorHandler("you must enter email and password", 400))
+  // validate email and password existence
+  if (!email || !password)
+    return next(errorHandler("you must enter email and password", 400));
 
   let user = await User.findOne({ email });
 
@@ -26,16 +27,45 @@ export const signin = expressAsyncHandler(async (req, res, next) => {
 
   const comparePassword = await bcryptjs.compare(password, user.password);
 
-  if (!comparePassword) return next(errorHandler("email or password is wrong!!", 401));
+  if (!comparePassword)
+    return next(errorHandler("email or password is wrong!!", 401));
 
   let token = generateToken({ id: user._id });
 
-  
   res
     .cookie("access_tokenn", token, {
       expires: new Date(Date.now() + 1000 * 60 * 60),
       httpOnly: true,
     })
     .status(200)
-    .json({ success: true, data: {eamil:user.email, _id:user._id,} }); 
-}); 
+    .json({ success: true, data:  {email: user.email, _id:user._id, username:user.username, profilePicture:user.profilePicture}});
+  });
+
+export const google = expressAsyncHandler(async (req, res, next) => {
+  console.log(req.body);
+  let { username, email, profilePicture } = req.body;
+
+  const user = await User.findOne({ email: email });
+  if (user) {
+    // handle signin
+
+    let token = generateToken({ id: user._id });
+
+    return res
+      .cookie("access_tokenn", token, {
+        expires: new Date(Date.now() + 1000 * 60 * 60),
+        httpOnly: true,
+      })
+      .status(200)
+      .json({ success: true, data:  {email: user.email, _id:user._id, username:user.username, profilePicture:user.profilePicture}});
+  } else {
+    username =
+      (username.split(" ").join("") +
+      Math.floor(Math.random() * 10000).toString()).slice(0,12);
+    let password = Math.random().toString(32).slice(-8);
+    console.log(username, password);
+    const newUser = new User({ username, password, email, profilePicture });
+    await newUser.save();
+    res.status(201).json({ success: true, data: {email: newUser.email, _id:newUser._id, username:newUser.username, profilePicture:newUser.profilePicture} })
+  }
+});
