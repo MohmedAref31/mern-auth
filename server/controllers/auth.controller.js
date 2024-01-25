@@ -16,7 +16,11 @@ export const signup = expressAsyncHandler(async (req, res, next) => {
 export const signin = expressAsyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  // validate email and password existence 
+  if(!email || !password)
+    return next(errorHandler("you must enter email and password", 400))
+
+  let user = await User.findOne({ email });
 
   if (!user) return next(errorHandler("email or password is wrong!!", 401));
 
@@ -26,11 +30,12 @@ export const signin = expressAsyncHandler(async (req, res, next) => {
 
   let token = generateToken({ id: user._id });
 
+  
   res
     .cookie("access_tokenn", token, {
       expires: new Date(Date.now() + 1000 * 60 * 60),
       httpOnly: true,
     })
     .status(200)
-    .json({ success: true, data: user });
-});
+    .json({ success: true, data: {eamil:user.email, _id:user._id,} }); 
+}); 
