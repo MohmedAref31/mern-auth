@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
-import {signinSuccess} from '../redux/slices/userSlice.js'
+import {signinFaild, signinSuccess} from '../redux/slices/userSlice.js'
 
 export default function OAuth() {
     const dispatch = useDispatch()
@@ -30,6 +30,7 @@ export default function OAuth() {
       
     } catch (error) {
       console.log("googel auth error : " + error.message);
+      dispatch(signinFaild("an error happened while signing in with google"))
     }
   };
 

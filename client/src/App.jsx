@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Siginup from "./pages/Siginup";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Header from "./componentes/Header";
 import { useSelector } from "react-redux";
 
@@ -20,6 +21,7 @@ export default function App() {
        
         <Route element={currentUser?<Outlet/>:<Navigate to={'/login'}/>}>
           <Route path="/about" element={<About />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </Router>

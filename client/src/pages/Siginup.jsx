@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2'
 import OAuth from "../componentes/OAuth";
+import { notify } from "../componentes/Notify";
 
 
 
@@ -42,12 +42,7 @@ export default function Siginup() {
     }
   };
 
-  const notify = (msg, title) =>
-  Swal.fire({
-    title: title,
-    text: msg,
-    icon: title
-  });
+  
   return (
     <div>
       <h3 className="text-center text-3xl capitalize font-semibold my-5">
