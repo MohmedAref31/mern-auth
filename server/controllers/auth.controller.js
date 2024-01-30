@@ -9,17 +9,15 @@ export const signup = expressAsyncHandler(async (req, res, next) => {
 
   await user.save();
 
-  res
-    .status(201)
-    .json({
-      success: true,
-      data: {
-        email: user.email,
-        _id: user._id,
-        username: user.username,
-        profilePicture: user.profilePicture,
-      },
-    });
+  res.status(201).json({
+    success: true,
+    data: {
+      email: user.email,
+      _id: user._id,
+      username: user.username,
+      profilePicture: user.profilePicture,
+    },
+  });
 });
 
 export const signin = expressAsyncHandler(async (req, res, next) => {
@@ -41,7 +39,7 @@ export const signin = expressAsyncHandler(async (req, res, next) => {
   let token = generateToken({ id: user._id });
 
   res
-    .cookie("access_tokenn", token, {
+    .cookie("access_token", token, {
       expires: new Date(Date.now() + 1000 * 60 * 60),
       httpOnly: true,
     })
@@ -88,11 +86,11 @@ export const google = expressAsyncHandler(async (req, res, next) => {
       Math.floor(Math.random() * 10000).toString()
     ).slice(0, 12);
     let password = Math.random().toString(32).slice(-8);
-    console.log(username, password);
     const newUser = new User({ username, password, email, profilePicture });
-    await newUser.save();
+    const user = await newUser.save();
+    let token = generateToken({ id: user._id });
     res
-      .cookie("access_tokenn", token, {
+      .cookie("access_token", token, {
         expires: new Date(Date.now() + 1000 * 60 * 60),
         httpOnly: true,
       })

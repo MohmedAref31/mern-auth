@@ -5,8 +5,8 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      minLength: [4, "too short username"],
-      maxLength: [12, "too long username"],
+      minLength: [4, "username must be at least 4 characters"],
+      maxLength: [12, "username must be at most 12 characters"],
       required: [true, "username is required"],
       trim: true,
     },
@@ -20,8 +20,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "password is required"],
       trim: true,
-      minLength: [6, "too short passwrd length"],
-      maxLengh: [18, "too long passwrd length"],
+      minLength: [6, "username must be at least 6 characters"],
+      maxLengh: [18, "username must be at least 18 characters"],
     },
     profilePicture: {
       type: String,
@@ -34,11 +34,19 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   const user = this;
-  console.log(this);
   if (user.isModified("password")) {
     user.password = await bcryptjs.hash(user.password, 10);
   }
 });
+
+userSchema.pre('findOneAndUpdate',async function () {
+  const updatedPassword = this._update.password;
+  console.log(this._update)
+  // console.log(this);
+  if (updatedPassword ) {
+    this._update.password = await bcryptjs.hash(updatedPassword, 10);
+  }
+} )
 
 // userSchema.statics.hashPassword = async function(){
 
